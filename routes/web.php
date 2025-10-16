@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,20 @@ Route::middleware(['auth'])->group(function () {
 
     // Intern (or general user) task management
     Route::resource('tasks', TaskController::class);
+
+    // Categories: non-admins get read access only
+    Route::resource('categories', CategoryController::class)->only(['index', 'show']);
+
+    // Admin-only category routes stacked on top of read-only routes
+    Route::middleware('admin')->group(function () {
+        Route::resource('categories', CategoryController::class)->only([
+            'create',
+            'store',
+            'edit',
+            'update',
+            'destroy',
+        ]);
+    });
 });
 
 // 🔐 Admin-only routes
