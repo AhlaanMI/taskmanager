@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCategoryRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()?->isAdmin() ?? false;
     }
 
     /**
@@ -22,7 +23,27 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['required', 'string', 'max:100', 'unique:categories,name'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'status' => ['required', Rule::in(['active', 'inactive'])],
+        ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('name')) {
+            $this->merge(['name' => trim((string) $this->input('name'))]);
+        }
+
+        if ($this->has('status')) {
+            $this->merge(['status' => strtolower((string) $this->input('status'))]);
+        }
+    }
+
+    public function messages(): array
+    {
+        return [
+            'status.in' => 'Status must be either active or inactive.',
         ];
     }
 }
