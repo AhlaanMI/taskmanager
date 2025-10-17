@@ -60,8 +60,7 @@ Route::middleware(['auth'])->group(function () {
     // Intern (or general user) task management
     Route::resource('tasks', TaskController::class);
 
-    // Categories: non-admins get read access only
-    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+
 
     // Admin-only category routes stacked on top of read-only routes
     Route::middleware('admin')->group(function () {
@@ -73,6 +72,9 @@ Route::middleware(['auth'])->group(function () {
          Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
     });
 });
+
+// Categories: non-admins get read access only
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
 
 // 🔐 Admin-only routes
 Route::middleware(['auth', 'admin'])->group(function () {
