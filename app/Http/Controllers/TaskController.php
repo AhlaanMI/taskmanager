@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use App\Models\Category;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
@@ -32,7 +31,16 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::orderBy('name')->get(['id', 'name']);
+        $users = auth()->user()->isAdmin()
+            ? User::orderBy('name')->get(['id', 'name'])
+            : User::whereKey(auth()->id())->get(['id', 'name']);
+
+        return view('tasks.create', [
+            'categories' => $categories,
+            'users' => $users,
+            'task' => new Task(),
+        ]);
     }
 
     /**
@@ -64,9 +72,20 @@ class TaskController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Task $task)
     {
-        //
+        $this->authorize('update', $task);
+
+        $categories = Category::orderBy('name')->get(['id', 'name']);
+        $users = auth()->user()->isAdmin()
+            ? User::orderBy('name')->get(['id', 'name'])
+            : User::whereKey(auth()->id())->get(['id', 'name']);
+
+        return view('tasks.edit', [
+            'task' => $task,
+            'categories' => $categories,
+            'users' => $users,
+        ]);
     }
 
     /**

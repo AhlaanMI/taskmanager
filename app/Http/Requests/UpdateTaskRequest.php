@@ -21,13 +21,20 @@ class UpdateTaskRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => 'required|string|max:255',
+        $taskId = (int) optional($this->route('task'))->id;
+
+        $rules = [
+            'name' => 'required|string|max:255|unique:tasks,name,' . $taskId,
             'description' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
-            'deadline' => 'required|date|after:today',
+            'deadline' => 'required|date|after_or_equal:today',
             'status' => 'required|in:pending,in_progress,completed,cancelled',
-            'user_id' => 'required|exists:users,id',
         ];
+
+        if ($this->user() && $this->user()->isAdmin()) {
+            $rules['user_id'] = 'required|exists:users,id';
+        }
+
+        return $rules;
     }
 }

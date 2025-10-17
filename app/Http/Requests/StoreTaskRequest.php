@@ -21,10 +21,18 @@ class StoreTaskRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => 'required|string|max:255|unique:categories,name',
+        $rules = [
+            'name' => 'required|string|max:255|unique:tasks,name',
             'description' => 'nullable|string',
-            'status' => 'required|in:active,inactive',
+            'category_id' => 'required|exists:categories,id',
+            'deadline' => 'required|date|after_or_equal:today',
+            'status' => 'required|in:pending,in_progress,completed,cancelled',
         ];
+
+        if ($this->user() && $this->user()->isAdmin()) {
+            $rules['user_id'] = 'required|exists:users,id';
+        }
+
+        return $rules;
     }
 }
