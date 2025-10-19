@@ -19,7 +19,6 @@ Modern task management dashboard powered by Laravel 10. It provides role-based a
 -   MySQL (or any Laravel-supported database)
 -   Blade templates
 -   Tailwind CSS + Vite
--   Alpine.js (optional enhancements via `resources/js`)
 
 ## Getting Started
 
@@ -28,7 +27,7 @@ Modern task management dashboard powered by Laravel 10. It provides role-based a
 -   PHP >= 8.1 with required extensions
 -   Composer
 -   Node.js >= 18 and npm
--   MySQL or MariaDB instance (SQLite will also work with minor `.env` changes)
+-   MySQL
 
 ### Installation
 
